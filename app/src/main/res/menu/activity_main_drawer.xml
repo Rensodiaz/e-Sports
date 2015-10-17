@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/headLines" android:icon="@drawable/ic_public"
+            android:title="@string/headLines" />
+
+        <item android:id="@+id/Lol" android:icon="@drawable/ic_mouse_red"
+            android:title="@string/LOL" />
+
+        <item android:id="@+id/Dota2" android:icon="@drawable/ic_mouse_red"
+            android:title="@string/Dota2" />
+
+        <item android:id="@+id/heros_of_the_storm" android:icon="@drawable/ic_mouse_red"
+            android:title="@string/Heroes_of_the_Storm" />
+
+        <item android:id="@+id/counter_strike" android:icon="@drawable/ic_headset"
+            android:title="@string/Counter_Strike" />
+
+        <item android:id="@+id/overWatch" android:icon="@drawable/ic_headset"
+            android:title="@string/OverWatch" />
+
+        <item android:id="@+id/hearth_stone" android:icon="@drawable/ic_keyboard"
+            android:title="@string/HearthStone" />
+
+        <item android:id="@+id/starCraft" android:icon="@drawable/ic_keyboard"
+            android:title="@string/StarCraft" />
+    </group>
+
+    <item android:title="Settings">
+        <menu>
+            <item android:id="@+id/nav_share" android:icon="@drawable/ic_favorite_red_600_18dp"
+                android:title="Favorite" />
+            <item android:id="@+id/nav_send" android:icon="@android:drawable/ic_menu_send"
+                android:title="About" />
+        </menu>
+    </item>
+</menu>

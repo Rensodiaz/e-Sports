@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">e-Sports</string>
+    <string name="facebook_app_id">YOUR APP ID HERE</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_share_article">Share</string>
+
+    <!--Category of the games -->
+    <string name="Moba">Online Battle arena</string>
+    <string name="Rts">Real-time Strategy</string>
+    <string name="Fps">First-person shooters</string>
+    <!--Games -->
+    <string name="headLines">Headlines</string>
+    <string name="LOL">League of Legends</string>
+    <string name="Dota2">Dota 2</string>
+    <string name="Counter_Strike">Counter-Strike</string>
+    <string name="StarCraft">StarCraft II</string>
+    <string name="Heroes_of_the_Storm">Heroes of the Storm</string>
+    <string name="HearthStone">Hearth Stone</string>
+    <string name="OverWatch">OverWatch</string>
+    <!--APIs Key to fetch server -->
+    <string name="headlinesKey">cv5wze38</string>
+    <string name="lolSubKey">8c5lbpfs</string>
+    <string name="dota2Key">91pngax8</string>
+    <string name="starcraftKey">dxc694k8</string>
+    <string name="counter_strikeKey">e8cf9enu</string>
+    <string name="hearthStoneKey">ca5honm2</string>
+    <string name="herosofthestormKey">57ftjb4k</string>
+    <string name="overWatchKey">9iwoz0ha</string>
+    <!--APIs Key to fetch for articles -->
+    <string name="headlinesArticlesKey">8u05djhi</string>
+</resources>
