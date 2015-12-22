@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //Drawer to select game to see news from.
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         IntentFilter connectionChangesFilters = new IntentFilter();
         connectionChangesFilters.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         connectionChangesFilters.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        this.registerReceiver(connectionChangeReceiver, connectionChangesFilters);
+        this.registerReceiver(connectionChangeReceiver, connectionChangesFilters);//TODO: This receiver need to be unregistered from the service
     }
 
     @Override
@@ -134,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * This method is called within the fragment to go to the selected article content
-     * @param link
+     * @param link String with the article url.
      */
     public void switchFragment(String title, String link){
         shareArticle = new ShareArticle(title, link);
@@ -147,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * Change news subject
-     * @param sub
+     * @param sub Object with an int that belong to the game to display
      */
     public void gameNews(Object sub){
         Fragment titlesFrag = new ListTitles();
@@ -176,8 +177,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * This method change fragments eg: Titles and content of those titles
-     * @param fragment
-     * @param fragmentTag
+     * @param fragment fragment to be add to our pagerAdapter
+     * @param fragmentTag tag of the fragment to let know to which category does this fragment belong to.
      */
     public void setFragment(final Fragment fragment, String fragmentTag){
         if (fragmentTag.equals(LIST_TITLE_TAG)){
@@ -265,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * game selection from the drawer menu
-     * @param game
+     * @param game int to the game we want to read news from.
      */
     private void getGame(int game){
         if (!loadingContent) {
@@ -320,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * changing the image of the drawer layout for each game
-     * @param backgroundImage
+     * @param backgroundImage int of the image for the game selected.
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void changeDrawerHeaderImage(int backgroundImage){
@@ -331,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * This remove the loading object from the main screen
-     * @param show
+     * @param show boolean to remove or add the loading animation.
      */
     public void finishGettingData(boolean show){
         loadingContent = false;
