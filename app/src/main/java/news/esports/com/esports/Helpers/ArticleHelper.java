@@ -43,11 +43,8 @@ public class ArticleHelper {
         @Override
         protected Void doInBackground(Void... params) {
             try {//TODO: check this because test are not passing here
-                // Connect to the web site
-                Log.e(tag, "url: "+url);
                 //String url2 = "http://www.gosugamers.net/heroesofthestorm/features/4506-grubby-i-started-playing-heroes-and-never-looked-back";
                 Document doc = Jsoup.connect(url).get();
-
                 content = doc.getElementById("article");
                 content2 = doc.getElementsByClass("light");
                 Elements articleDesc = content.getElementsByTag("p");

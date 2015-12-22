@@ -5,6 +5,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_refresh">Refresh</string>
     <string name="action_share_article">Share</string>
+    <string name="loading_message">Please wait for content to be display!</string>
 
     <!--Category of the games -->
     <string name="Moba">Online Battle arena</string>
@@ -30,4 +31,10 @@
     <string name="overWatchKey">9iwoz0ha</string>
     <!--APIs Key to fetch for articles -->
     <string name="headlinesArticlesKey">8u05djhi</string>
+
+    <!-- Banner id-->
+    <string name="banner_ad_unit_id">ca-app-pub-9338073374941289/2357067059</string>
+
+    <!-- Application messages -->
+    <string name="not_internet">Please, Check your internet connection and try again.</string>
 </resources>

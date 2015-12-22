@@ -15,13 +15,15 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import news.esports.com.esports.Helpers.ArticleHelper;
 import news.esports.com.esports.Helpers.ArticleInterface;
 import news.esports.com.esports.Helpers.Environments;
 import news.esports.com.esports.MainActivity;
 import news.esports.com.esports.R;
 import news.esports.com.esports.models.ArticleContent;
-
 /**
  * Created by Renso on 9/13/2015.
  */
@@ -54,6 +56,11 @@ public class TitleArticle extends Fragment implements ArticleInterface ,Environm
         progressBar = (ProgressBar)articleView.findViewById(R.id.progressBar);
         //get my article
         new ArticleHelper(this, link);
+
+        //Ads layout
+        AdView mAdView = (AdView) articleView.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
         return articleView;
     }
     /*

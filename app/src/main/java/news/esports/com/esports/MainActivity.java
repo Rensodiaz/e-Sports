@@ -1,7 +1,13 @@
 package news.esports.com.esports;
 
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -25,6 +31,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.appevents.AppEventsLogger;
 
@@ -32,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import news.esports.com.esports.Helpers.GameSelector;
+import news.esports.com.esports.Helpers.InternetConnectionHelper;
 import news.esports.com.esports.constants.SocialNetwork;
 import news.esports.com.esports.factories.SocialFactory;
 import news.esports.com.esports.fragments.ListTitles;
@@ -53,7 +61,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Menu menu;
     private ShareArticle shareArticle;
     private int myOrientation;
-    private boolean orientationState;
+    private int orientationState = 1;//by default is portrait mode
+    private boolean loadingContent = false;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -67,11 +76,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //TextView for the text on drawer
         drawerTextLine = (TextView)findViewById(R.id.drawerTextLine);
-        //set the fragment of feeds
-        if (savedInstanceState==null) {
-            getGame(Preferences.getSelectedGame(this));
-        }
 
+        //set the fragment of feeds
+        if (savedInstanceState==null && InternetConnectionHelper.isAnyNetworkConnected(this)) {
+            getGame(Preferences.getSelectedGame(this));
+        }else {
+            Toast.makeText(this, getString(R.string.not_internet), Toast.LENGTH_SHORT).show();
+        }
+        //Toolbar for the hamburger icon and animation
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -94,8 +106,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         if(newConfig.orientation != myOrientation){
-            Log.w(tag, "my orientation change!");
-            orientationState = true;
+            orientationState = newConfig.orientation;
         }
         super.onConfigurationChanged(newConfig);
     }
@@ -106,6 +117,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.i(tag, "onResume");
         // This is a facebook analytics tool
         AppEventsLogger.activateApp(this);
+        //Registering the receiver for the connections changes
+        IntentFilter connectionChangesFilters = new IntentFilter();
+        connectionChangesFilters.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        connectionChangesFilters.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        this.registerReceiver(connectionChangeReceiver, connectionChangesFilters);
     }
 
     @Override
@@ -164,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * @param fragmentTag
      */
     public void setFragment(final Fragment fragment, String fragmentTag){
-        if (fragmentTag.equals(LIST_TITLE_TAG) && !orientationState){
+        if (fragmentTag.equals(LIST_TITLE_TAG)){
             if (myFragments.isEmpty()) {
                 myFragments.add(fragment);
             }else {
@@ -182,6 +198,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 myFragments.add(fragment);
             }
             mPagerAdapter.notifyDataSetChanged();
+            //Animation fadeInAnimation = AnimationUtils.loadAnimation(this, R.animator.fragment_slide_right);
+            //mPager.startAnimation(fadeInAnimation);
             mPager.setCurrentItem(myFragments.size() - 1, true);
         }
         //remove the loading progress from main screen
@@ -233,10 +251,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Getting the news from each game
         int id = item.getItemId();
         //get the game available
-        orientationState = false;
-        getGame(id);
+//        orientationState = false;
+        if (InternetConnectionHelper.isAnyNetworkConnected(this)) {//only fetch titles if there is internet connection
+            getGame(id);
+        }else{
+            Toast.makeText(this, getString(R.string.not_internet), Toast.LENGTH_SHORT).show();
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
     }
 
@@ -245,49 +268,54 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * @param game
      */
     private void getGame(int game){
-        switch (game) {
-            case R.id.headLines:
-                gameNews(R.string.headlinesKey);
-                drawerTextLine.setText(getResources().getString(R.string.headLines));
-                changeDrawerHeaderImage(R.drawable.headlines);
-                break;
-            case R.id.Lol:
-                gameNews(R.string.lolSubKey);
-                drawerTextLine.setText(getResources().getString(R.string.LOL));
-                changeDrawerHeaderImage(R.drawable.lol);
-                break;
-            case R.id.Dota2:
-                gameNews(R.string.dota2Key);
-                drawerTextLine.setText(getResources().getString(R.string.Dota2));
-                changeDrawerHeaderImage(R.drawable.dota2);
-                break;
-            case R.id.counter_strike:
-                gameNews(R.string.counter_strikeKey);
-                drawerTextLine.setText(getResources().getString(R.string.Counter_Strike));
-                changeDrawerHeaderImage(R.drawable.counter_strike);
-                break;
-            case R.id.starCraft:
-                gameNews(R.string.starcraftKey);
-                drawerTextLine.setText(getResources().getString(R.string.StarCraft));
-                changeDrawerHeaderImage(R.drawable.starcraft2);
-                break;
-            case R.id.hearth_stone:
-                gameNews(R.string.hearthStoneKey);
-                drawerTextLine.setText(getResources().getString(R.string.HearthStone));
-                changeDrawerHeaderImage(R.drawable.hearthstone);
-                break;
-            case R.id.heros_of_the_storm:
-                gameNews(R.string.herosofthestormKey);
-                drawerTextLine.setText(getResources().getString(R.string.Heroes_of_the_Storm));
-                changeDrawerHeaderImage(R.drawable.heroes_of_the_storm);
-                break;
-            case R.id.overWatch:
-                gameNews(R.string.overWatchKey);
-                drawerTextLine.setText(getResources().getString(R.string.OverWatch));
-                changeDrawerHeaderImage(R.drawable.overwatch);
-                break;
+        if (!loadingContent) {
+            loadingContent=true;
+            switch (game) {
+                case R.id.headLines:
+                    gameNews(R.string.headlinesKey);
+                    drawerTextLine.setText(getResources().getString(R.string.headLines));
+                    changeDrawerHeaderImage(R.drawable.headlines);
+                    break;
+                case R.id.Lol:
+                    gameNews(R.string.lolSubKey);
+                    drawerTextLine.setText(getResources().getString(R.string.LOL));
+                    changeDrawerHeaderImage(R.drawable.lol);
+                    break;
+                case R.id.Dota2:
+                    gameNews(R.string.dota2Key);
+                    drawerTextLine.setText(getResources().getString(R.string.Dota2));
+                    changeDrawerHeaderImage(R.drawable.dota2);
+                    break;
+                case R.id.counter_strike:
+                    gameNews(R.string.counter_strikeKey);
+                    drawerTextLine.setText(getResources().getString(R.string.Counter_Strike));
+                    changeDrawerHeaderImage(R.drawable.counter_strike);
+                    break;
+                case R.id.starCraft:
+                    gameNews(R.string.starcraftKey);
+                    drawerTextLine.setText(getResources().getString(R.string.StarCraft));
+                    changeDrawerHeaderImage(R.drawable.starcraft2);
+                    break;
+                case R.id.hearth_stone:
+                    gameNews(R.string.hearthStoneKey);
+                    drawerTextLine.setText(getResources().getString(R.string.HearthStone));
+                    changeDrawerHeaderImage(R.drawable.hearthstone);
+                    break;
+                case R.id.heros_of_the_storm:
+                    gameNews(R.string.herosofthestormKey);
+                    drawerTextLine.setText(getResources().getString(R.string.Heroes_of_the_Storm));
+                    changeDrawerHeaderImage(R.drawable.heroes_of_the_storm);
+                    break;
+                case R.id.overWatch:
+                    gameNews(R.string.overWatchKey);
+                    drawerTextLine.setText(getResources().getString(R.string.OverWatch));
+                    changeDrawerHeaderImage(R.drawable.overwatch);
+                    break;
+            }
+            Preferences.setSelectedGame(this, game);
+        }else {
+            Toast.makeText(this, getString(R.string.loading_message), Toast.LENGTH_SHORT).show();
         }
-        Preferences.setSelectedGame(this, game);
     }
 
     /**
@@ -306,6 +334,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * @param show
      */
     public void finishGettingData(boolean show){
+        loadingContent = false;
         FrameLayout loadingLayout = (FrameLayout)findViewById(R.id.progressWraper);
         if (show){
             loadingLayout.setVisibility(View.VISIBLE);
@@ -375,6 +404,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     }
+    /**
+     * This receiver will help to control the connection of data with in the app.
+     */
+    public BroadcastReceiver connectionChangeReceiver = new  BroadcastReceiver() {
+        final String tag = this.getClass().getSimpleName();
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
+                final int state = intent.getExtras().getInt(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN);
+                switch (state) {
+                    case WifiManager.WIFI_STATE_ENABLED:
+                        Log.d(tag, "WIFI_STATE_ENABLED");
+
+                        break;
+
+                    case WifiManager.WIFI_STATE_DISABLED:
+                        Log.d(tag, "WIFI_STATE_DISABLED");
+//                        if (!ConnectivityHelper.isAnyNetworkConnected(context)) {
+//                            if (bluetoothDataDialog == null) {
+//                                buildAlertDialog(R.string.bluetoothData_network, R.string.bluetoothData_network_msg);
+//                            }
+//                        }
+                        break;
+                }
+            }else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)){
+                Log.i(tag, "Change to connection!!");
+            }
+        }
+    };
 }
 
 

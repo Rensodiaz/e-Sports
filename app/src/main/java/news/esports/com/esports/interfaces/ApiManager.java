@@ -20,7 +20,7 @@ public interface ApiManager {
     //Call<Data> redditHot(@Path("subReddit") String subReddit);
 
     //https://www.kimonolabs.com/api/ this is for titles and images
-    @GET("/api/{game}?apikey=YOUR KIMONO APP KEY HERE")
+    @GET("/api/{game}?apikey=qi9owhc3hqoys5opnFBZkCBBYpdHjbkq")
     Call<DataCollection> dataCollection(@Path("game") String game);
 
 }

@@ -9,12 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import news.esports.com.esports.Helpers.Environments;
+import news.esports.com.esports.Helpers.InternetConnectionHelper;
 import news.esports.com.esports.MainActivity;
 import news.esports.com.esports.R;
 import news.esports.com.esports.models.Collection1;
@@ -75,11 +77,13 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> i
         @Override
         public void onClick(View v) {
             //set the fragment of feeds
-            if (context instanceof MainActivity) {
+            if (context instanceof MainActivity && InternetConnectionHelper.isAnyNetworkConnected(context)) {
                 final String title = mItems.get(getLayoutPosition()).getTitle().getText();
                 final String link = mItems.get(getLayoutPosition()).getTitle().getHref();
                 MainActivity mainActivity = (MainActivity) context;
                 mainActivity.switchFragment(title, link);
+            }else{
+                Toast.makeText(context, context.getString(R.string.not_internet), Toast.LENGTH_SHORT).show();
             }
         }
     }

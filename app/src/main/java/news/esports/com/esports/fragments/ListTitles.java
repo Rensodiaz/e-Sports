@@ -49,13 +49,6 @@ public class ListTitles extends Fragment implements Environments {
         super.onCreate(savedInstanceState);
         game = getArguments().getString("game");
     }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.i(tag, "onActivityCreated");
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -80,7 +73,6 @@ public class ListTitles extends Fragment implements Environments {
         mAdapter = new GridAdapter(getActivity(), data);
         mRecyclerView.setAdapter(mAdapter);
     }
-
     /*
         Getting data
      */
@@ -103,12 +95,15 @@ public class ListTitles extends Fragment implements Environments {
                             MainActivity mainActivity = (MainActivity) getActivity();
                             if (mainActivity != null)
                                 mainActivity.finishGettingData(false);
-                            loadingData(response.body().getResults().getCollection1());
+                            try {
+                                loadingData(response.body().getResults().getCollection1());
+                            }catch (NullPointerException ex){
+                                Log.e(tag, "This exception need to be handle in a better way");
+                            }
                         }
                     };
                     handler.postDelayed(r, 1000);
                 }
-
                 @Override
                 public void onFailure(Throwable t) {
                     Log.e(tag, "failed to get title game: " + t.toString());
