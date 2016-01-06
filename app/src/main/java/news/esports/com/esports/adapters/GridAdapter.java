@@ -49,6 +49,7 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> i
         Typeface myTypeface = Typeface.createFromAsset(context.getAssets(), "fonts/DroidSerif_Regular.ttf");
         viewHolder.newsTitle.setText(mItems.get(position).getTitle().getText());
         viewHolder.newsTitle.setTypeface(myTypeface);
+        //TODO:need to add date to the news articles
         if (thumbnail.isEmpty()){
             viewHolder.imgThumbnail.setImageResource(R.drawable.headlines);
         }else {
@@ -66,11 +67,13 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> i
 
         public ImageView imgThumbnail;
         public TextView newsTitle;
+        public TextView newsDate;
 
         public ViewHolder(View itemView) {
             super(itemView);
             imgThumbnail = (ImageView)itemView.findViewById(R.id.img_thumbnail);
             newsTitle = (TextView)itemView.findViewById(R.id.news_title);
+            newsDate = (TextView)itemView.findViewById(R.id.news_date);
             itemView.setOnClickListener(this);
         }
 

@@ -106,10 +106,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
         if(newConfig.orientation != myOrientation){
             orientationState = newConfig.orientation;
         }
-        super.onConfigurationChanged(newConfig);
     }
 
     @Override
