@@ -1,9 +1,9 @@
 package news.esports.com.esports.interfaces;
 
 import news.esports.com.esports.models.DataCollection;
-import retrofit.Call;
-import retrofit.http.GET;
-import retrofit.http.Path;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 /**
  * Created by Renso on 9/11/2015.
