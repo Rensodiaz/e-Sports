@@ -12,10 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.JsonArray;
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.TwitterException;
+import retrofit.Callback;
+import news.esports.com.esports.models.DataCollection;
+import news.esports.com.esports.MainActivity;
 
 import java.util.List;
 
@@ -81,58 +80,36 @@ public class ListTitles extends Fragment implements Environments {
     private void getFeeds() {
         if (game!=null) {
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(ENDPOINT2)
+                    .baseUrl(ENDPOINT)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
             ApiManager service = retrofit.create(ApiManager.class);
-            Call<JsonArray> eSportNews = service.getEsportNews();
-            eSportNews.enqueue(new Callback<JsonArray>() {
+            Call<DataCollection> lolNews = service.dataCollection(game);
+            lolNews.enqueue(new Callback<DataCollection>() {
                 @Override
-                public void success(Result<JsonArray> result) {
-                    Log.i(tag, "result: "+result.data);
-                }
-
-                @Override
-                public void failure(TwitterException e) {
-                    Log.e(tag, "no se que haces aqui: "+e.getMessage());
-                }
-
-                @Override
-                public void onResponse(Response<JsonArray> response) {
-                    Log.w(tag, "response: "+response.body());
+                public void onResponse(Response<DataCollection> response) {
+                    final Runnable r = new Runnable() {
+                        public void run() {
+                            MainActivity mainActivity = (MainActivity) getActivity();
+                            if (mainActivity != null)
+                                mainActivity.finishGettingData(false);
+                            try {
+                                loadingData(response.body().getResults().getCollection1());
+                            }catch (NullPointerException ex){
+                                Log.e(tag, "This exception need to be handle in a better way");
+                            }
+                        }
+                    };
+                    handler.postDelayed(r, 1000);
                 }
 
                 @Override
                 public void onFailure(Throwable t) {
-                    Log.e(tag, "problems: "+t.getMessage());
+                    Log.e(tag, "failed to get title game: " + t.toString());
+                    failRequest();
                 }
             });
-//            Call<DataCollection> lolNews = service.dataCollection(game);
-//            lolNews.enqueue(new Callback<DataCollection>() {
-//                @Override
-//                public void onResponse(final Response<DataCollection> response) {
-//                    final Runnable r = new Runnable() {
-//                        public void run() {
-//                            //remove the loading and display content
-//                            MainActivity mainActivity = (MainActivity) getActivity();
-//                            if (mainActivity != null)
-//                                mainActivity.finishGettingData(false);
-//                            try {
-//                                loadingData(response.body().getResults().getCollection1());
-//                            }catch (NullPointerException ex){
-//                                Log.e(tag, "This exception need to be handle in a better way");
-//                            }
-//                        }
-//                    };
-//                    handler.postDelayed(r, 1000);
-//                }
-//                @Override
-//                public void onFailure(Throwable t) {
-//                    Log.e(tag, "failed to get title game: " + t.toString());
-//                    failRequest();
-//                }
-//            });
         }else {
             Log.w(tag, "gae variable should never be null here.");
         }
