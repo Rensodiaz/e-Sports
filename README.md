@@ -1,7 +1,7 @@
 e-Sports application
 =====================
 
-This application allow the user to get latest news on different online games.
+This application allow the user to get latest news on different online games. It now targets the latest Android SDK and uses AndroidX libraries so it can be opened with Android Studio Narwhal.
 
 Features
 ----

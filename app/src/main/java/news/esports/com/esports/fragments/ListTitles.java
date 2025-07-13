@@ -2,31 +2,30 @@ package news.esports.com.esports.fragments;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.VisibleForTesting;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.VisibleForTesting;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import com.google.gson.JsonArray;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit.Callback;
 import news.esports.com.esports.models.DataCollection;
 import news.esports.com.esports.MainActivity;
-
 import java.util.List;
-
 import news.esports.com.esports.Helpers.Environments;
 import news.esports.com.esports.R;
 import news.esports.com.esports.adapters.GridAdapter;
 import news.esports.com.esports.interfaces.ApiManager;
 import news.esports.com.esports.models.Collection1;
-import retrofit.Call;
-import retrofit.GsonConverterFactory;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Renso on 9/13/2015.
@@ -88,26 +87,14 @@ public class ListTitles extends Fragment implements Environments {
             Call<DataCollection> lolNews = service.dataCollection(game);
             lolNews.enqueue(new Callback<DataCollection>() {
                 @Override
-                public void onResponse(Response<DataCollection> response) {
-                    final Runnable r = new Runnable() {
-                        public void run() {
-                            MainActivity mainActivity = (MainActivity) getActivity();
-                            if (mainActivity != null)
-                                mainActivity.finishGettingData(false);
-                            try {
-                                loadingData(response.body().getResults().getCollection1());
-                            }catch (NullPointerException ex){
-                                Log.e(tag, "This exception need to be handle in a better way");
-                            }
-                        }
-                    };
-                    handler.postDelayed(r, 1000);
+
+                public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
+                    Log.w(tag, "response: " + response.body());
                 }
 
                 @Override
-                public void onFailure(Throwable t) {
-                    Log.e(tag, "failed to get title game: " + t.toString());
-                    failRequest();
+                public void onFailure(Call<JsonArray> call, Throwable t) {
+                    Log.e(tag, "problems: " + t.getMessage());
                 }
             });
         }else {
